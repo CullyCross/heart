@@ -2,6 +2,7 @@ package me.cullycross.heart.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,6 +64,13 @@ public class MainActivity extends AppCompatActivity {
         initDrawer();
         initRecyclerView();
         initToolbar();
+
+        findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Snackbar.make(v, "Hello Snackbar", Snackbar.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override

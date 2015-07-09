@@ -2,5 +2,6 @@
 <resources>
     <color name="black">#000</color>
     <color name="white">#fff</color>
+    <color name="average_grey">#42454b</color>
 
 </resources>

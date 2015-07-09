@@ -10,7 +10,11 @@ import android.widget.AdapterView;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
+import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
+import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
     protected Toolbar mToolbar;
 
     private Drawer mDrawer;
+    private AccountHeader mAccountHeader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,9 +69,36 @@ public class MainActivity extends AppCompatActivity {
 
     // Init methods
     private void initDrawer() {
+
+        mAccountHeader = new AccountHeaderBuilder()
+                .withActivity(this)
+                .withHeaderBackground(R.drawable.header_background)
+                .addProfiles(
+                        new ProfileDrawerItem().withName("Anton Shkurenko")
+                                .withEmail("elaugfein@gmail.com")
+                                .withIcon(getResources().getDrawable(android.R.drawable.ic_lock_idle_lock)),
+                        new ProfileDrawerItem().withName("Cully Cross")
+                                .withEmail("cullycross@gmail.com")
+                                .withIcon(getResources().getDrawable(android.R.drawable.ic_delete)),
+                        new ProfileDrawerItem().withName("Elaugfein Mizzrym")
+                                .withEmail("mizzrym@gmail.com")
+                                .withIcon(getResources().getDrawable(android.R.drawable.ic_menu_view))
+                )
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
+                        return false;
+                    }
+                })
+                .build();
+
         mDrawer = new DrawerBuilder()
                 .withActivity(this)
                 .withToolbar(mToolbar)
+                .withAccountHeader(mAccountHeader)
+                .withTranslucentStatusBar(true)
+                .withActionBarDrawerToggleAnimated(true)
+                .withDisplayBelowToolbar(true)
                 .addDrawerItems(
 
                 )

@@ -12,4 +12,8 @@
 
     </style>
 
+    <style name="ThemeOverlay.Heart.Light" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="colorPrimary">#42454b</item>
+    </style>
+
 </resources>

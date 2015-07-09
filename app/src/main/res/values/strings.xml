@@ -3,4 +3,32 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <!-- test strings -->
+    <string-array name="test_strings">
+        <item>VK  &#8212; c\'mon!</item>
+        <item>Facebook &#8212; hello!</item>
+        <item>Twitter &#8212; what\'s up?</item>
+        <item>Instagram &#8212; yo!</item>
+        <item>Google plus &#8212; geez&#8230;</item>
+        <item>Google mail &#8212; mail, bitch!</item>
+        <item>VK  &#8212; c\'mon!</item>
+        <item>Facebook &#8212; hello!</item>
+        <item>Twitter &#8212; what\'s up?</item>
+        <item>Instagram &#8212; yo!</item>
+        <item>Google plus &#8212; geez&#8230;</item>
+        <item>Google mail &#8212; mail, bitch!</item>
+        <item>VK  &#8212; c\'mon!</item>
+        <item>Facebook &#8212; hello!</item>
+        <item>Twitter &#8212; what\'s up?</item>
+        <item>Instagram &#8212; yo!</item>
+        <item>Google plus &#8212; geez&#8230;</item>
+        <item>Google mail &#8212; mail, bitch!</item>
+        <item>VK  &#8212; c\'mon!</item>
+        <item>Facebook &#8212; hello!</item>
+        <item>Twitter &#8212; what\'s up?</item>
+        <item>Instagram &#8212; yo!</item>
+        <item>Google plus &#8212; geez&#8230;</item>
+        <item>Google mail &#8212; mail, bitch!</item>
+    </string-array>
 </resources>

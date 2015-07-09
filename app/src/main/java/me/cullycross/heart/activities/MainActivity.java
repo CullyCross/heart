@@ -1,12 +1,16 @@
 package me.cullycross.heart.activities;
 
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ImageView;
 
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
@@ -16,9 +20,12 @@ import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
+
 import butterknife.Bind;
+import butterknife.BindString;
 import butterknife.ButterKnife;
 import me.cullycross.heart.R;
+import me.cullycross.heart.adapters.PasswordsAdapter;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -26,8 +33,23 @@ public class MainActivity extends AppCompatActivity {
     @Bind(R.id.main_toolbar)
     protected Toolbar mToolbar;
 
+    @Bind(R.id.rvToDoList)
+    protected RecyclerView mRecyclerView;
+
+    @Bind(R.id.collapsing_toolbar)
+    protected CollapsingToolbarLayout mCollapsingToolbarLayout;
+
+    @BindString(R.string.app_name)
+    protected String mHeader;
+
+    //@BindArray(R.array.test_strings)
+    protected String [] mStrings;
+
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
+
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +61,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         initDrawer();
+        initRecyclerView();
+        initToolbar();
     }
 
     @Override
@@ -72,7 +96,8 @@ public class MainActivity extends AppCompatActivity {
 
         mAccountHeader = new AccountHeaderBuilder()
                 .withActivity(this)
-                .withHeaderBackground(R.drawable.header_background)
+                .withHeaderBackground(R.drawable.toolbar_background)
+                .withHeaderBackgroundScaleType(ImageView.ScaleType.CENTER_CROP)
                 .addProfiles(
                         new ProfileDrawerItem().withName("Anton Shkurenko")
                                 .withEmail("elaugfein@gmail.com")
@@ -114,5 +139,21 @@ public class MainActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         mDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
+    }
+
+    private void initRecyclerView() {
+
+        mRecyclerView.setHasFixedSize(true);
+
+        mLayoutManager = new LinearLayoutManager(this);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        mStrings = getResources().getStringArray(R.array.test_strings);
+        mAdapter = new PasswordsAdapter(mStrings);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    private void initToolbar() {
+        mCollapsingToolbarLayout.setTitle(mHeader);
     }
 }

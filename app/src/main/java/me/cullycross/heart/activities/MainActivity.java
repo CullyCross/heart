@@ -13,11 +13,18 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 
+import com.mikepenz.google_material_typeface_library.GoogleMaterial;
+import com.mikepenz.iconics.IconicsDrawable;
+import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
+import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
+import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
+import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
@@ -115,35 +122,41 @@ public class MainActivity extends AppCompatActivity {
                                 .withIcon(getResources().getDrawable(android.R.drawable.ic_delete)),
                         new ProfileDrawerItem().withName("Elaugfein Mizzrym")
                                 .withEmail("mizzrym@gmail.com")
-                                .withIcon(getResources().getDrawable(android.R.drawable.ic_menu_view))
-                )
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile profile, boolean currentProfile) {
-                        return false;
-                    }
-                })
-                .build();
+                                .withIcon(getResources().getDrawable(android.R.drawable.ic_menu_view)),
+                        new ProfileSettingDrawerItem().withName("Add new profile")
+                                .withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add)),
+                        new ProfileSettingDrawerItem().withName("Profile Manager")
+                                .withIcon(GoogleMaterial.Icon.gmd_settings)
+                ).build();
 
-        mDrawer = new DrawerBuilder()
-                .withActivity(this)
-                .withToolbar(mToolbar)
-                .withAccountHeader(mAccountHeader)
-                .withTranslucentStatusBar(true)
-                .withActionBarDrawerToggleAnimated(true)
-                .withDisplayBelowToolbar(true)
-                .addDrawerItems(
 
-                )
-                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                    @Override
-                    public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-                        // do something with the clicked item :D
+                        mDrawer = new DrawerBuilder()
+                                .withActivity(this)
+                                .withToolbar(mToolbar)
+                                .withAccountHeader(mAccountHeader)
+                                .withTranslucentStatusBar(true)
+                                .withActionBarDrawerToggleAnimated(true)
+                                .withDisplayBelowToolbar(true)
+                                .addDrawerItems(
+                                        new PrimaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home).withIdentifier(1),
+                                        new PrimaryDrawerItem().withName("Free to play").withIcon(FontAwesome.Icon.faw_gamepad),
+                                        new PrimaryDrawerItem().withName("Custom drawer item").withIcon(FontAwesome.Icon.faw_eye),
+                                        new SectionDrawerItem().withName("Section header"),
+                                        new SecondaryDrawerItem().withName("Settings").withIcon(FontAwesome.Icon.faw_cog),
+                                        new SecondaryDrawerItem().withName("Help").withIcon(FontAwesome.Icon.faw_question).setEnabled(false),
+                                        new SecondaryDrawerItem().withName("Open source").withIcon(FontAwesome.Icon.faw_github),
+                                        new SecondaryDrawerItem().withName("Contact").withIcon(FontAwesome.Icon.faw_bullhorn)
 
-                        return false;
-                    }
-                })
-                .build();
+                                )
+                                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+                                    @Override
+                                    public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
+                                        // do something with the clicked item :D
+
+                                        return false;
+                                    }
+                                })
+                                .build();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         mDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
@@ -163,5 +176,18 @@ public class MainActivity extends AppCompatActivity {
 
     private void initToolbar() {
         mCollapsingToolbarLayout.setTitle(mHeader);
+    }
+
+    ////////////////////////////////////////////////////////////
+    // Public methods
+    ////////////////////////////////////////////////////////////
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer != null && mDrawer.isDrawerOpen()) {
+            mDrawer.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
     }
 }

@@ -34,15 +34,14 @@ import butterknife.BindString;
 import butterknife.ButterKnife;
 import me.cullycross.heart.R;
 import me.cullycross.heart.adapters.PasswordsAdapter;
+import me.cullycross.heart.fragments.PasswordsFragment;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements PasswordsFragment.OnFragmentInteractionListener {
 
     @Bind(R.id.main_toolbar)
     protected Toolbar mToolbar;
-
-    @Bind(R.id.rvToDoList)
-    protected RecyclerView mRecyclerView;
 
     @Bind(R.id.collapsing_toolbar)
     protected CollapsingToolbarLayout mCollapsingToolbarLayout;
@@ -50,14 +49,11 @@ public class MainActivity extends AppCompatActivity {
     @BindString(R.string.app_name)
     protected String mHeader;
 
-    //@BindArray(R.array.test_strings)
-    protected String [] mStrings;
+    private final static String FRAGMENT_PASSWORDS = "fragment_passwords";
 
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
 
-    private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mLayoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(mToolbar);
 
         initDrawer();
-        initRecyclerView();
+        initFragment();
         initToolbar();
 
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
@@ -162,16 +158,15 @@ public class MainActivity extends AppCompatActivity {
         mDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
     }
 
-    private void initRecyclerView() {
+    private void initFragment() {
 
-        mRecyclerView.setHasFixedSize(true);
+        PasswordsFragment fragment = PasswordsFragment.newInstance("password");
 
-        mLayoutManager = new LinearLayoutManager(this);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        mStrings = getResources().getStringArray(R.array.test_strings);
-        mAdapter = new PasswordsAdapter(mStrings);
-        mRecyclerView.setAdapter(mAdapter);
+        getFragmentManager()
+                .beginTransaction()
+                .add(R.id.fragment_frame, fragment, FRAGMENT_PASSWORDS)
+                .addToBackStack(FRAGMENT_PASSWORDS)
+                .commit();
     }
 
     private void initToolbar() {

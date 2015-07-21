@@ -93,7 +93,7 @@ public class PasswordsFragment extends Fragment {
         mRecyclerView.setLayoutManager(mLayoutManager);
 
         mStrings = getResources().getStringArray(R.array.test_strings);
-        mAdapter = new PasswordsAdapter(mStrings);
+        mAdapter = new PasswordsAdapter(mStrings, getActivity());
         mRecyclerView.setAdapter(mAdapter);
     }
 

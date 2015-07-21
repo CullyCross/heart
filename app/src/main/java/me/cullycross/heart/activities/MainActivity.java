@@ -76,6 +76,10 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    ////////////////////////////////////////////////////////////
+    // Public methods
+    ////////////////////////////////////////////////////////////
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -96,6 +100,15 @@ public class MainActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer != null && mDrawer.isDrawerOpen()) {
+            mDrawer.closeDrawer();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     ////////////////////////////////////////////////////////////
@@ -171,18 +184,5 @@ public class MainActivity extends AppCompatActivity
 
     private void initToolbar() {
         mCollapsingToolbarLayout.setTitle(mHeader);
-    }
-
-    ////////////////////////////////////////////////////////////
-    // Public methods
-    ////////////////////////////////////////////////////////////
-
-    @Override
-    public void onBackPressed() {
-        if (mDrawer != null && mDrawer.isDrawerOpen()) {
-            mDrawer.closeDrawer();
-        } else {
-            super.onBackPressed();
-        }
     }
 }

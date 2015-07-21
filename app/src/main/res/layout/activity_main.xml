@@ -57,6 +57,7 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:src="@mipmap/ic_add_white_24dp"
+        app:layout_behavior="me.cullycross.heart.utils.FabScrollBehavior"
         app:backgroundTint="@color/average_grey"
         app:elevation="6dp"
         app:pressedTranslationZ="12dp"

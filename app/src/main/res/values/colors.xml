@@ -4,4 +4,7 @@
     <color name="white">#fff</color>
     <color name="average_grey">#42454b</color>
 
+    <color name="hunter_green">#355E3B</color>
+    <color name="dark_green">#232E2D</color>
+
 </resources>

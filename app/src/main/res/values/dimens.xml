@@ -9,4 +9,5 @@
     <!-- Card view values -->
     <dimen name="card_view_corner_radius">3dp</dimen>
     <dimen name="card_view_elevation">2dp</dimen>
+    <dimen name="card_view_margin">5dp</dimen>
 </resources>

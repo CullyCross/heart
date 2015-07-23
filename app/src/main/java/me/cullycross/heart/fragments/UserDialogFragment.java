@@ -55,7 +55,7 @@ public class UserDialogFragment extends DialogFragment implements DialogInterfac
         mTitle.setTypeface(
                 Typeface.createFromAsset(
                         getActivity().getAssets(),
-                        "/fonts/Lobster-Regular.ttf"
+                        "fonts/Lobster-Regular.ttf"
                 ));
 
         builder.setView(dialogView)

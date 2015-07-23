@@ -1,5 +1,6 @@
 package me.cullycross.heart.activities;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
@@ -7,6 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.TextPaint;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -29,11 +33,12 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 
+import java.lang.reflect.Field;
+
 import butterknife.Bind;
 import butterknife.BindString;
 import butterknife.ButterKnife;
 import me.cullycross.heart.R;
-import me.cullycross.heart.adapters.PasswordsAdapter;
 import me.cullycross.heart.fragments.PasswordsFragment;
 import me.cullycross.heart.fragments.UserDialogFragment;
 
@@ -196,6 +201,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void initToolbar() {
+
+        try {
+            // Retrieve the CollapsingTextHelper Field
+            final Field cthf = mCollapsingToolbarLayout.getClass().getDeclaredField("mCollapsingTextHelper");
+            cthf.setAccessible(true);
+
+            // Retrieve an instance of CollapsingTextHelper and its TextPaint
+            final Object cth = cthf.get(mCollapsingToolbarLayout);
+            final Field tpf = cth.getClass().getDeclaredField("mTextPaint");
+            tpf.setAccessible(true);
+
+            // Apply your Typeface to the CollapsingTextHelper TextPaint
+            ((TextPaint) tpf.get(cth)).setTypeface(
+                    Typeface.createFromAsset(
+                        getAssets(),
+                        "fonts/Lobster-Regular.ttf"
+                    ));
+        } catch (Exception ignored) {
+            // Nothing to do
+        }
+
         mCollapsingToolbarLayout.setTitle(mHeader);
     }
 

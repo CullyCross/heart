@@ -14,7 +14,6 @@
 
         <!-- Bottom View Start-->
         <LinearLayout
-            android:background="#66ddff00"
             android:id="@+id/bottom_wrapper"
             android:layout_width="160dp"
             android:weightSum="1"
@@ -25,14 +24,14 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
-                android:background="@color/dark_green"
+                android:background="@color/material_cool_teal"
                 />
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
-                android:background="@color/hunter_green"
+                android:background="@color/dark_green"
                 />
 
         </LinearLayout>

@@ -36,6 +36,12 @@ public class UserDialogFragment extends DialogFragment implements DialogInterfac
     private static final int PASSWORD = 2;
     private static final int PASSWORD_2 = 3;
 
+    public static UserDialogFragment newInstance() {
+        UserDialogFragment dialog = new UserDialogFragment();
+
+        return dialog;
+    }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

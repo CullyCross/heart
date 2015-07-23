@@ -35,10 +35,12 @@ import butterknife.ButterKnife;
 import me.cullycross.heart.R;
 import me.cullycross.heart.adapters.PasswordsAdapter;
 import me.cullycross.heart.fragments.PasswordsFragment;
+import me.cullycross.heart.fragments.UserDialogFragment;
 
 
 public class MainActivity extends AppCompatActivity
-        implements PasswordsFragment.OnFragmentInteractionListener {
+        implements PasswordsFragment.OnFragmentInteractionListener,
+                    Drawer.OnDrawerItemClickListener{
 
     @Bind(R.id.main_toolbar)
     protected Toolbar mToolbar;
@@ -50,6 +52,9 @@ public class MainActivity extends AppCompatActivity
     protected String mHeader;
 
     private final static String FRAGMENT_PASSWORDS = "fragment_passwords";
+    private final static String FRAGMENT_DIALOG_REGISTER = "fragment_dialog_register";
+
+    private final static int DRAWER_ADD_NEW_PROFILE = 0;
 
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
@@ -133,39 +138,47 @@ public class MainActivity extends AppCompatActivity
                                 .withEmail("mizzrym@gmail.com")
                                 .withIcon(getResources().getDrawable(android.R.drawable.ic_menu_view)),
                         new ProfileSettingDrawerItem().withName("Add new profile")
-                                .withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add)),
+                                .withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add))
+                                .withIdentifier(DRAWER_ADD_NEW_PROFILE),
                         new ProfileSettingDrawerItem().withName("Profile Manager")
                                 .withIcon(GoogleMaterial.Icon.gmd_settings)
-                ).build();
+                ).withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                    @Override
+                    public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
+                        switch (iProfile.getIdentifier()) {
+                            case DRAWER_ADD_NEW_PROFILE:
+                                UserDialogFragment dialog = UserDialogFragment.newInstance();
+                                dialog.show(getFragmentManager(), FRAGMENT_DIALOG_REGISTER);
+                                return true;
+                            default:
+                                return false;
+                        }
+                    }
+                })
+                .build();
 
 
-                        mDrawer = new DrawerBuilder()
-                                .withActivity(this)
-                                .withToolbar(mToolbar)
-                                .withAccountHeader(mAccountHeader)
-                                .withTranslucentStatusBar(true)
-                                .withActionBarDrawerToggleAnimated(true)
-                                .withDisplayBelowToolbar(true)
-                                .addDrawerItems(
-                                        new PrimaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home).withIdentifier(1),
-                                        new PrimaryDrawerItem().withName("Free to play").withIcon(FontAwesome.Icon.faw_gamepad),
-                                        new PrimaryDrawerItem().withName("Custom drawer item").withIcon(FontAwesome.Icon.faw_eye),
-                                        new SectionDrawerItem().withName("Section header"),
-                                        new SecondaryDrawerItem().withName("Settings").withIcon(FontAwesome.Icon.faw_cog),
-                                        new SecondaryDrawerItem().withName("Help").withIcon(FontAwesome.Icon.faw_question).setEnabled(false),
-                                        new SecondaryDrawerItem().withName("Open source").withIcon(FontAwesome.Icon.faw_github),
-                                        new SecondaryDrawerItem().withName("Contact").withIcon(FontAwesome.Icon.faw_bullhorn)
+        mDrawer = new DrawerBuilder()
+                .withActivity(this)
+                .withToolbar(mToolbar)
+                .withAccountHeader(mAccountHeader)
+                .withTranslucentStatusBar(true)
+                .withActionBarDrawerToggleAnimated(true)
+                .withDisplayBelowToolbar(true)
+                .addDrawerItems(
+                        new PrimaryDrawerItem().withName("Home").withIcon(FontAwesome.Icon.faw_home).withIdentifier(1),
+                        new PrimaryDrawerItem().withName("Free to play").withIcon(FontAwesome.Icon.faw_gamepad),
+                        new PrimaryDrawerItem().withName("Custom drawer item").withIcon(FontAwesome.Icon.faw_eye),
+                        new SectionDrawerItem().withName("Section header"),
+                        new SecondaryDrawerItem().withName("Settings").withIcon(FontAwesome.Icon.faw_cog),
+                        new SecondaryDrawerItem().withName("Help").withIcon(FontAwesome.Icon.faw_question).setEnabled(false),
+                        new SecondaryDrawerItem().withName("Open source").withIcon(FontAwesome.Icon.faw_github),
+                        new SecondaryDrawerItem().withName("Contact").withIcon(FontAwesome.Icon.faw_bullhorn)
 
-                                )
-                                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
-                                    @Override
-                                    public boolean onItemClick(AdapterView<?> parent, View view, int position, long id, IDrawerItem drawerItem) {
-                                        // do something with the clicked item :D
-
-                                        return false;
-                                    }
-                                })
-                                .build();
+                )
+                .withShowDrawerOnFirstLaunch(true)
+                .withOnDrawerItemClickListener(this)
+                .build();
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         mDrawer.getActionBarDrawerToggle().setDrawerIndicatorEnabled(true);
@@ -184,5 +197,15 @@ public class MainActivity extends AppCompatActivity
 
     private void initToolbar() {
         mCollapsingToolbarLayout.setTitle(mHeader);
+    }
+
+    @Override
+    public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+
+        switch (iDrawerItem.getIdentifier()) {
+
+            default:
+                return false;
+        }
     }
 }

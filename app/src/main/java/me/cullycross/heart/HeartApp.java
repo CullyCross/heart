@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.widget.ImageView;
 
+import com.activeandroid.ActiveAndroid;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
@@ -19,6 +20,8 @@ public class HeartApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        ActiveAndroid.initialize(this);
 
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override

@@ -1,7 +1,11 @@
 package me.cullycross.heart.users;
 
 import android.content.Context;
+import android.database.sqlite.SQLiteException;
 
+import com.activeandroid.Model;
+import com.activeandroid.annotation.Column;
+import com.activeandroid.annotation.Table;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
@@ -26,94 +30,103 @@ import java.util.Map;
  * todo(CullyCross): refactor it with ActiveAndroid
  */
 
-@Parcel
-public class UserProfile {
+@Table(name = "Users")
+@Parcel(value = Parcel.Serialization.BEAN, analyze = UserProfile.class)
+public class UserProfile extends Model {
 
     private static final String FILENAME = "user_profiles";
 
+    @Column(name = "Name",
+            unique = true)
     @ParcelProperty("name")
     @SerializedName("name")
     private String mName;
 
+    @Column(name = "Password")
     @ParcelProperty("password")
     @SerializedName("password")
     private String mPassword;
 
-    @ParcelProperty("map")
-    @SerializedName("map")
-    private final Map<String, String> mPasswords;
-
-    public UserProfile(String name, String password) {
-        mPasswords = new HashMap<String, String>();
-        mName = name;
-        mPassword = password;
+    public UserProfile() {
+        super();
     }
 
     @ParcelConstructor
     public UserProfile(
-            @ParcelProperty("map") Map<String, String> passwords,
             @ParcelProperty("password") String password,
             @ParcelProperty("name") String name) {
-        mPasswords = passwords;
+        this();
         mPassword = password;
         mName = name;
+        this.save();
     }
 
-    public String putPassword(String name, String password) {
-        return mPasswords.put(name, password);
+    @Override
+    public String toString() {
+
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("Name: ")
+                .append(mName)
+                .append(", Password: ")
+                .append(mPassword)
+                .append(", Passwords: ");
+
+        List<Password> passwords = getPasswords();
+
+        for(Password p : passwords) {
+            builder.append(p.toString());
+        }
+        return builder.toString();
     }
 
-    public Map<String, String> getPasswords() {
-        return mPasswords;
+    public List<Password> getPasswords() {
+        return getMany(Password.class, "User");
     }
 
-    public void saveUserToJson(Context ctx) {
-        List<UserProfile> list = readFromJson(ctx);
-        list.add(this);
+    public Password addPassword(String name, String password) {
 
-        writeToJson(ctx, list);
+        return new Password(name, password, this);
     }
 
-    public static void writeToJson(Context ctx, List<UserProfile> userProfiles) {
-        Gson gson = new Gson();
+    @Table(name = "Passwords")
+    @Parcel(value = Parcel.Serialization.BEAN, analyze = Password.class)
+    public static class Password extends Model {
 
-        Type type = new TypeToken<List<UserProfile>>(){}.getType();
-        String accountsJson = gson.toJson(userProfiles, type);
+        @Column(name = "Name")
+        @ParcelProperty("name")
+        @SerializedName("name")
+        private String mName;
 
-        try {
-            FileOutputStream outputStream =
-                    ctx.openFileOutput(FILENAME, Context.MODE_PRIVATE);
-            outputStream.write(accountsJson.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        @Column(name = "Password")
+        @ParcelProperty("password")
+        @SerializedName("password")
+        private String mPassword;
+
+        @Column(name = "User")
+        @ParcelProperty("user")
+        @SerializedName("user")
+        private UserProfile mUserProfile;
+
+        public Password() {
+            super();
+        }
+
+        @ParcelConstructor
+        public Password(
+                @ParcelProperty("name") String name,
+                @ParcelProperty("password") String password,
+                @ParcelProperty("user") UserProfile userProfile) {
+            this();
+            mName = name;
+            mPassword = password;
+            mUserProfile = userProfile;
+            this.save();
+        }
+
+        @Override
+        public String toString() {
+            return "\nPassName: " + mName + ", PassPass: " + mPassword;
         }
     }
-
-    public static List<UserProfile> readFromJson(Context ctx) {
-        Gson gson = new Gson();
-        StringBuilder fileContent = new StringBuilder("");
-        try {
-            FileInputStream inputStream = ctx.openFileInput(FILENAME);
-            byte[] buffer = new byte[1024];
-            int n;
-
-            while ((n = inputStream.read(buffer)) != -1)
-            {
-                fileContent.append(new String(buffer, 0, n));
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        if(fileContent.toString().equals("")) {
-            throw new IllegalArgumentException("File content is empty");
-        }
-
-        Type type = new TypeToken<List<UserProfile>>(){}.getType();
-        return gson.fromJson(fileContent.toString(), type);
-    }
-
-
 }

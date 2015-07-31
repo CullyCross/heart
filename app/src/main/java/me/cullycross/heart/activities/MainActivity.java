@@ -5,12 +5,9 @@ import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -32,7 +29,6 @@ import com.mikepenz.materialdrawer.model.SectionDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
-
 import java.lang.reflect.Field;
 
 import butterknife.Bind;
@@ -41,6 +37,7 @@ import butterknife.ButterKnife;
 import me.cullycross.heart.R;
 import me.cullycross.heart.fragments.PasswordsFragment;
 import me.cullycross.heart.fragments.UserDialogFragment;
+import me.cullycross.heart.users.UserProfile;
 
 
 public class MainActivity extends AppCompatActivity
@@ -58,6 +55,7 @@ public class MainActivity extends AppCompatActivity
 
     private final static String FRAGMENT_PASSWORDS = "fragment_passwords";
     private final static String FRAGMENT_DIALOG_REGISTER = "fragment_dialog_register";
+    private final static String TAG = MainActivity.class.getCanonicalName();
 
     private final static int DRAWER_ADD_NEW_PROFILE = 0;
 
@@ -84,6 +82,18 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(v, "Hello Snackbar", Snackbar.LENGTH_LONG).show();
             }
         });
+
+        UserProfile userProfile = new UserProfile("Anton", "LittlePassword");
+
+        userProfile.addPassword("Vk", "VkPass");
+        userProfile.addPassword("Fb", "FbPass");
+        userProfile.addPassword("Tw", "TwPass");
+
+        //////////////////////
+
+        UserProfile loadedUser = UserProfile.load(UserProfile.class, userProfile.getId());
+
+        Log.v(TAG, loadedUser.toString());
     }
 
     ////////////////////////////////////////////////////////////

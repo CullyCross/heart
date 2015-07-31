@@ -10,6 +10,14 @@
         android:label="@string/app_name"
         android:name=".HeartApp"
         android:theme="@style/Theme.Heart.Light" >
+
+        <meta-data
+            android:name="AA_DB_NAME"
+            android:value="Heart.db" />
+        <meta-data
+            android:name="AA_DB_VERSION"
+            android:value="1" />
+
         <activity
             android:name=".activities.MainActivity"
             android:label="@string/app_name" >

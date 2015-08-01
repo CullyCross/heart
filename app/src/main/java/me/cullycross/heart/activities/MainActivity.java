@@ -122,6 +122,27 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+
+        switch (iDrawerItem.getIdentifier()) {
+
+            default:
+                return false;
+        }
+    }
+
+    @Override
+    public void onUserRegistered(UserProfile userProfile) {
+
+        ProfileDrawerItem profile = userProfile.toProfileDrawerItem();
+
+        mAccountHeader.addProfile(
+                profile,
+                mAccountHeader.getProfiles().size() - 2);
+        mAccountHeader.setActiveProfile(profile, false);
+    }
+
     ////////////////////////////////////////////////////////////
     // Private methods
     ////////////////////////////////////////////////////////////
@@ -138,8 +159,7 @@ public class MainActivity extends AppCompatActivity
                     public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
                         switch (iProfile.getIdentifier()) {
                             case DRAWER_ADD_NEW_PROFILE:
-                                UserDialogFragment dialog = UserDialogFragment.newInstance();
-                                dialog.show(getFragmentManager(), FRAGMENT_DIALOG_REGISTER);
+                                showRegistrationDialog();
                                 return true;
                             default:
                                 return false;
@@ -149,6 +169,7 @@ public class MainActivity extends AppCompatActivity
                 .build();
 
         mAccountHeader.addProfiles(UserProfile.getDrawerProfiles());
+
         mAccountHeader.addProfiles(
                 new ProfileSettingDrawerItem().withName("Add new profile")
                 .withIdentifier(DRAWER_ADD_NEW_PROFILE),
@@ -218,24 +239,10 @@ public class MainActivity extends AppCompatActivity
         mCollapsingToolbarLayout.setTitle(mHeader);
     }
 
-    @Override
-    public boolean onItemClick(AdapterView<?> adapterView, View view, int i, long l, IDrawerItem iDrawerItem) {
+    // other private methods
 
-        switch (iDrawerItem.getIdentifier()) {
-
-            default:
-                return false;
-        }
-    }
-
-    @Override
-    public void onUserRegistered(UserProfile userProfile) {
-
-        ProfileDrawerItem profile = userProfile.toProfileDrawerItem();
-
-        mAccountHeader.addProfile(
-                profile,
-                mAccountHeader.getProfiles().size() - 2);
-        mAccountHeader.setActiveProfile(profile, false);
+    private void showRegistrationDialog() {
+        UserDialogFragment dialog = UserDialogFragment.newInstance();
+        dialog.show(getFragmentManager(), FRAGMENT_DIALOG_REGISTER);
     }
 }

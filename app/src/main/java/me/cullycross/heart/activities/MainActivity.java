@@ -21,6 +21,7 @@ import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
+import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
@@ -30,6 +31,7 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -42,7 +44,8 @@ import me.cullycross.heart.users.UserProfile;
 
 public class MainActivity extends AppCompatActivity
         implements PasswordsFragment.OnFragmentInteractionListener,
-                    Drawer.OnDrawerItemClickListener{
+                    Drawer.OnDrawerItemClickListener,
+                    UserDialogFragment.OnFragmentInteractionListener{
 
     @Bind(R.id.main_toolbar)
     protected Toolbar mToolbar;
@@ -82,18 +85,6 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.make(v, "Hello Snackbar", Snackbar.LENGTH_LONG).show();
             }
         });
-
-        UserProfile userProfile = new UserProfile("Anton", "LittlePassword");
-
-        userProfile.addPassword("Vk", "VkPass");
-        userProfile.addPassword("Fb", "FbPass");
-        userProfile.addPassword("Tw", "TwPass");
-
-        //////////////////////
-
-        UserProfile loadedUser = UserProfile.load(UserProfile.class, userProfile.getId());
-
-        Log.v(TAG, loadedUser.toString());
     }
 
     ////////////////////////////////////////////////////////////
@@ -142,22 +133,7 @@ public class MainActivity extends AppCompatActivity
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.toolbar_background)
                 .withHeaderBackgroundScaleType(ImageView.ScaleType.CENTER_CROP)
-                .addProfiles(
-                        new ProfileDrawerItem().withName("Anton Shkurenko")
-                                .withEmail("elaugfein@gmail.com")
-                                .withIcon(getResources().getDrawable(android.R.drawable.ic_lock_idle_lock)),
-                        new ProfileDrawerItem().withName("Cully Cross")
-                                .withEmail("cullycross@gmail.com")
-                                .withIcon(getResources().getDrawable(android.R.drawable.ic_delete)),
-                        new ProfileDrawerItem().withName("Elaugfein Mizzrym")
-                                .withEmail("mizzrym@gmail.com")
-                                .withIcon(getResources().getDrawable(android.R.drawable.ic_menu_view)),
-                        new ProfileSettingDrawerItem().withName("Add new profile")
-                                .withIcon(new IconicsDrawable(this, GoogleMaterial.Icon.gmd_add))
-                                .withIdentifier(DRAWER_ADD_NEW_PROFILE),
-                        new ProfileSettingDrawerItem().withName("Profile Manager")
-                                .withIcon(GoogleMaterial.Icon.gmd_settings)
-                ).withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
+                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
                     @Override
                     public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
                         switch (iProfile.getIdentifier()) {
@@ -171,6 +147,13 @@ public class MainActivity extends AppCompatActivity
                     }
                 })
                 .build();
+
+        mAccountHeader.addProfiles(UserProfile.getDrawerProfiles());
+        mAccountHeader.addProfiles(
+                new ProfileSettingDrawerItem().withName("Add new profile")
+                .withIdentifier(DRAWER_ADD_NEW_PROFILE),
+                new ProfileSettingDrawerItem().withName("Profile Manager")
+        );
 
 
         mDrawer = new DrawerBuilder()
@@ -214,16 +197,16 @@ public class MainActivity extends AppCompatActivity
 
         try {
             // Retrieve the CollapsingTextHelper Field
-            final Field cthf = mCollapsingToolbarLayout.getClass().getDeclaredField("mCollapsingTextHelper");
-            cthf.setAccessible(true);
+            final Field ctlf = mCollapsingToolbarLayout.getClass().getDeclaredField("mCollapsingTextHelper");
+            ctlf.setAccessible(true);
 
             // Retrieve an instance of CollapsingTextHelper and its TextPaint
-            final Object cth = cthf.get(mCollapsingToolbarLayout);
-            final Field tpf = cth.getClass().getDeclaredField("mTextPaint");
+            final Object ctp = ctlf.get(mCollapsingToolbarLayout);
+            final Field tpf = ctp.getClass().getDeclaredField("mTextPaint");
             tpf.setAccessible(true);
 
             // Apply your Typeface to the CollapsingTextHelper TextPaint
-            ((TextPaint) tpf.get(cth)).setTypeface(
+            ((TextPaint) tpf.get(ctp)).setTypeface(
                     Typeface.createFromAsset(
                         getAssets(),
                         "fonts/Lobster-Regular.ttf"
@@ -243,5 +226,16 @@ public class MainActivity extends AppCompatActivity
             default:
                 return false;
         }
+    }
+
+    @Override
+    public void onUserRegistered(UserProfile userProfile) {
+
+        ProfileDrawerItem profile = userProfile.toProfileDrawerItem();
+
+        mAccountHeader.addProfile(
+                profile,
+                mAccountHeader.getProfiles().size() - 2);
+        mAccountHeader.setActiveProfile(profile, false);
     }
 }

@@ -10,6 +10,8 @@ import com.activeandroid.ActiveAndroid;
 import com.mikepenz.materialdrawer.util.DrawerImageLoader;
 import com.squareup.picasso.Picasso;
 
+import fr.tkeunebr.gravatar.Gravatar;
+
 /**
  * Created by cullycross on 7/8/15.
  *
@@ -17,11 +19,18 @@ import com.squareup.picasso.Picasso;
  */
 public class HeartApp extends Application {
 
+    public static Gravatar sGravatar;
+
+    public HeartApp() {
+        super();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
 
         ActiveAndroid.initialize(this);
+        sGravatar = new Gravatar.Builder().build();
 
         DrawerImageLoader.init(new DrawerImageLoader.IDrawerImageLoader() {
             @Override

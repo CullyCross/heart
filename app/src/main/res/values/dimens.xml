@@ -10,4 +10,11 @@
     <dimen name="card_view_corner_radius">3dp</dimen>
     <dimen name="card_view_elevation">2dp</dimen>
     <dimen name="card_view_margin">5dp</dimen>
+
+    <!-- Dialog values -->
+    <dimen name="text_field_margin">4dp</dimen>
+    <dimen name="text_field_marginTop">16dp</dimen>
+    <dimen name="text_field_marginSides">16dp</dimen>
+    <dimen name="logo_bar_height">48dp</dimen>
+    <dimen name="logo_text_size">24sp</dimen>
 </resources>

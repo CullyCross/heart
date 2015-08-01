@@ -6,9 +6,11 @@ import android.database.sqlite.SQLiteException;
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
+import com.activeandroid.query.Select;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
+import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
@@ -21,6 +23,9 @@ import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import fr.tkeunebr.gravatar.Gravatar;
+import me.cullycross.heart.HeartApp;
 
 /**
  * Created by cullycross on 7/21/15.
@@ -46,6 +51,25 @@ public class UserProfile extends Model {
     @ParcelProperty("password")
     @SerializedName("password")
     private String mPassword;
+
+    public static List<UserProfile> getProfiles() {
+        return new Select().from(UserProfile.class).orderBy("id ASC").execute();
+    }
+
+    public static ProfileDrawerItem [] getDrawerProfiles() {
+
+        List<UserProfile> profiles = getProfiles();
+        int size = profiles.size();
+
+        ProfileDrawerItem [] drawerProfiles =
+                new ProfileDrawerItem[size];
+
+        for(int i = 0; i < size; i++) {
+            drawerProfiles[i] = profiles.get(i).toProfileDrawerItem();
+        }
+
+        return drawerProfiles;
+    }
 
     public UserProfile() {
         super();
@@ -85,8 +109,16 @@ public class UserProfile extends Model {
     }
 
     public Password addPassword(String name, String password) {
-
         return new Password(name, password, this);
+    }
+
+    public ProfileDrawerItem toProfileDrawerItem() {
+        return new ProfileDrawerItem()
+                .withEmail(mName)
+                .withIcon(HeartApp.sGravatar.with(mName)
+                        .defaultImage(Gravatar.DefaultImage.IDENTICON)
+                        .build());
+
     }
 
     @Table(name = "Passwords")

@@ -42,4 +42,5 @@ dependencies {
     provided 'org.parceler:parceler:1.0.2'
     compile 'com.google.code.gson:gson:2.3.1'
     compile 'com.michaelpardo:activeandroid:3.1.0-SNAPSHOT'
+    compile files('libs/gravatar-android-1.0.jar')
 }

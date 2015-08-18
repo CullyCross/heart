@@ -1,8 +1,10 @@
 package me.cullycross.heart.activities;
 
+import android.app.FragmentTransaction;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -14,14 +16,11 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 
-import com.mikepenz.google_material_typeface_library.GoogleMaterial;
-import com.mikepenz.iconics.IconicsDrawable;
 import com.mikepenz.iconics.typeface.FontAwesome;
 import com.mikepenz.materialdrawer.Drawer;
 import com.mikepenz.materialdrawer.DrawerBuilder;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeader;
 import com.mikepenz.materialdrawer.accountswitcher.AccountHeaderBuilder;
-import com.mikepenz.materialdrawer.model.DividerDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 import com.mikepenz.materialdrawer.model.ProfileSettingDrawerItem;
@@ -31,7 +30,6 @@ import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IProfile;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.BindString;
@@ -39,13 +37,16 @@ import butterknife.ButterKnife;
 import me.cullycross.heart.R;
 import me.cullycross.heart.fragments.PasswordsFragment;
 import me.cullycross.heart.fragments.UserDialogFragment;
+import me.cullycross.heart.fragments.WelcomeFragment;
 import me.cullycross.heart.users.UserProfile;
 
 
 public class MainActivity extends AppCompatActivity
         implements PasswordsFragment.OnFragmentInteractionListener,
-                    Drawer.OnDrawerItemClickListener,
-                    UserDialogFragment.OnFragmentInteractionListener{
+                    UserDialogFragment.OnFragmentInteractionListener,
+                    WelcomeFragment.OnFragmentInteractionListener,
+                    AccountHeader.OnAccountHeaderListener,
+                    Drawer.OnDrawerItemClickListener {
 
     @Bind(R.id.main_toolbar)
     protected Toolbar mToolbar;
@@ -53,10 +54,14 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.collapsing_toolbar)
     protected CollapsingToolbarLayout mCollapsingToolbarLayout;
 
+    @Bind(R.id.fab)
+    protected FloatingActionButton mFab;
+
     @BindString(R.string.app_name)
     protected String mHeader;
 
     private final static String FRAGMENT_PASSWORDS = "fragment_passwords";
+    private final static String FRAGMENT_WELCOME = "fragment_welcome";
     private final static String FRAGMENT_DIALOG_REGISTER = "fragment_dialog_register";
     private final static String TAG = MainActivity.class.getCanonicalName();
 
@@ -65,6 +70,7 @@ public class MainActivity extends AppCompatActivity
     private Drawer mDrawer;
     private AccountHeader mAccountHeader;
 
+    private ProfileDrawerItem mLogItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +85,7 @@ public class MainActivity extends AppCompatActivity
         initFragment();
         initToolbar();
 
+        // TODO(cullycross): 8/18/15 change onclick later
         findViewById(R.id.fab).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +147,34 @@ public class MainActivity extends AppCompatActivity
         mAccountHeader.addProfile(
                 profile,
                 mAccountHeader.getProfiles().size() - 2);
-        mAccountHeader.setActiveProfile(profile, false);
+        mAccountHeader.setActiveProfile(profile, true);
+    }
+
+    @Override
+    public void onFragmentStart() {
+        mFab.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onWelcomeTextClicked() {
+        showRegistrationDialog();
+    }
+
+    @Override
+    public void onFragmentPause() {
+        mFab.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
+        switch (iProfile.getIdentifier()) {
+            case DRAWER_ADD_NEW_PROFILE:
+                showRegistrationDialog();
+                return true;
+            default:
+                Log.d(TAG, "onProfileChanged(), id=" + iProfile.getIdentifier());
+                return false;
+        }
     }
 
     ////////////////////////////////////////////////////////////
@@ -154,25 +188,18 @@ public class MainActivity extends AppCompatActivity
                 .withActivity(this)
                 .withHeaderBackground(R.drawable.toolbar_background)
                 .withHeaderBackgroundScaleType(ImageView.ScaleType.CENTER_CROP)
-                .withOnAccountHeaderListener(new AccountHeader.OnAccountHeaderListener() {
-                    @Override
-                    public boolean onProfileChanged(View view, IProfile iProfile, boolean b) {
-                        switch (iProfile.getIdentifier()) {
-                            case DRAWER_ADD_NEW_PROFILE:
-                                showRegistrationDialog();
-                                return true;
-                            default:
-                                return false;
-                        }
-                    }
-                })
+                .withOnAccountHeaderListener(this)
                 .build();
 
-        mAccountHeader.addProfiles(UserProfile.getDrawerProfiles());
+        // TODO(CullyCross): 8/18/15 change to logout onLogIn and back
+        mLogItem = new ProfileDrawerItem().withEmail("Log in");
+        mAccountHeader.addProfile(mLogItem, 0);
+
+        mAccountHeader.addProfiles(UserProfile.getRealDrawerProfiles());
 
         mAccountHeader.addProfiles(
                 new ProfileSettingDrawerItem().withName("Add new profile")
-                .withIdentifier(DRAWER_ADD_NEW_PROFILE),
+                        .withIdentifier(DRAWER_ADD_NEW_PROFILE),
                 new ProfileSettingDrawerItem().withName("Profile Manager")
         );
 
@@ -205,12 +232,13 @@ public class MainActivity extends AppCompatActivity
 
     private void initFragment() {
 
-        PasswordsFragment fragment = PasswordsFragment.newInstance("password");
+        WelcomeFragment fragment = WelcomeFragment.newInstance();
 
         getFragmentManager()
                 .beginTransaction()
-                .add(R.id.fragment_frame, fragment, FRAGMENT_PASSWORDS)
-                .addToBackStack(FRAGMENT_PASSWORDS)
+                .setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE)
+                .add(R.id.fragment_frame, fragment, FRAGMENT_WELCOME)
+                .addToBackStack(FRAGMENT_WELCOME)
                 .commit();
     }
 

@@ -1,28 +1,17 @@
 package me.cullycross.heart.users;
 
-import android.content.Context;
-import android.database.sqlite.SQLiteException;
-
 import com.activeandroid.Model;
 import com.activeandroid.annotation.Column;
 import com.activeandroid.annotation.Table;
 import com.activeandroid.query.Select;
-import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
-import com.google.gson.reflect.TypeToken;
 import com.mikepenz.materialdrawer.model.ProfileDrawerItem;
 
 import org.parceler.Parcel;
 import org.parceler.ParcelConstructor;
 import org.parceler.ParcelProperty;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import fr.tkeunebr.gravatar.Gravatar;
 import me.cullycross.heart.HeartApp;
@@ -39,26 +28,26 @@ import me.cullycross.heart.HeartApp;
 @Parcel(value = Parcel.Serialization.BEAN, analyze = UserProfile.class)
 public class UserProfile extends Model {
 
-    private static final String FILENAME = "user_profiles";
+    protected static final String FILENAME = "user_profiles";
 
     @Column(name = "Name",
             unique = true)
     @ParcelProperty("name")
     @SerializedName("name")
-    private String mName;
+    protected String mName;
 
     @Column(name = "Password")
     @ParcelProperty("password")
     @SerializedName("password")
-    private String mPassword;
+    protected String mPassword;
 
-    public static List<UserProfile> getProfiles() {
+    public static List<UserProfile> getRealProfiles() {
         return new Select().from(UserProfile.class).orderBy("id ASC").execute();
     }
 
-    public static ProfileDrawerItem [] getDrawerProfiles() {
+    public static ProfileDrawerItem [] getRealDrawerProfiles() {
 
-        List<UserProfile> profiles = getProfiles();
+        List<UserProfile> profiles = getRealProfiles();
         int size = profiles.size();
 
         ProfileDrawerItem [] drawerProfiles =
@@ -82,7 +71,6 @@ public class UserProfile extends Model {
         this();
         mPassword = password;
         mName = name;
-        this.save();
     }
 
     @Override
@@ -104,11 +92,29 @@ public class UserProfile extends Model {
         return builder.toString();
     }
 
+    public static UserProfile createUser(String password,
+                                  String name) {
+        UserProfile user = new UserProfile(password, name);
+        user.save();
+        return user;
+    }
+
     public List<Password> getPasswords() {
         return getMany(Password.class, "User");
     }
 
+    public List<FakeUserProfile> getFakes() {
+        return getMany(FakeUserProfile.class, "LinkedUser");
+    }
+
     public Password addPassword(String name, String password) {
+
+        List<FakeUserProfile> fakes = getFakes();
+
+        for(FakeUserProfile fake : fakes) {
+            fake.addPassword(name);
+        }
+
         return new Password(name, password, this);
     }
 
@@ -119,46 +125,5 @@ public class UserProfile extends Model {
                         .defaultImage(Gravatar.DefaultImage.IDENTICON)
                         .build());
 
-    }
-
-    @Table(name = "Passwords")
-    @Parcel(value = Parcel.Serialization.BEAN, analyze = Password.class)
-    public static class Password extends Model {
-
-        @Column(name = "Name")
-        @ParcelProperty("name")
-        @SerializedName("name")
-        private String mName;
-
-        @Column(name = "Password")
-        @ParcelProperty("password")
-        @SerializedName("password")
-        private String mPassword;
-
-        @Column(name = "User")
-        @ParcelProperty("user")
-        @SerializedName("user")
-        private UserProfile mUserProfile;
-
-        public Password() {
-            super();
-        }
-
-        @ParcelConstructor
-        public Password(
-                @ParcelProperty("name") String name,
-                @ParcelProperty("password") String password,
-                @ParcelProperty("user") UserProfile userProfile) {
-            this();
-            mName = name;
-            mPassword = password;
-            mUserProfile = userProfile;
-            this.save();
-        }
-
-        @Override
-        public String toString() {
-            return "\nPassName: " + mName + ", PassPass: " + mPassword;
-        }
     }
 }

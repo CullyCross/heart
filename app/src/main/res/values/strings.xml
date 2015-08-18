@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">Heart</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="welcome_string">Create your first user!</string>
 
     <!-- test strings -->
     <string-array name="test_strings">
